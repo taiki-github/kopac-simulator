@@ -1,30 +1,28 @@
 FROM php:8.0-apache
 
-# phpの設定ファイルとhttpdの設定ファイルをコンテナ内に設コピー
+# phpの設定ファイルとapacheの設定ファイルをコピー
 COPY ./php/php.ini /usr/local/etc/php/
-COPY ./apache/default.conf /etc/apache2/sites-enabled/
+COPY ./apache/000-default.conf /etc/apache2/sites-enabled/
 
-RUN apt-get update
 
-# Laravelプロジェクト作成に必要なパッケージをインストール
-RUN apt -y install git unzip
+# 必要なパッケージをインストール
+RUN apt-get update \
+  && apt-get install -y zlib1g-dev mariadb-client git zip unzip vim libzip-dev libicu-dev libonig-dev \
+  && apt-get clean \
++  && docker-php-ext-install pdo_mysql mysqli
 
-# phpで必要なモノをインストール
-RUN docker-php-ext-install pdo_mysql mysqli
+
+# nodejsとnpmをインストールしてバージョンアップする
+RUN apt  install -y nodejs npm
+RUN npm install -g n
+RUN n stable
+RUN npm update -g npm
+
+# apacheのモジュールこれがないとルーティングが上手くいかない
+RUN cd /etc/apache2/mods-enabled \
+    && ln -s ../mods-available/rewrite.load
+
 
 # composerのインストール
-# このやり方だとハッシュ値がバージョンごとに変わるので下のやり方でやる
-# RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-#     && php -r "if (hash_file('sha384', 'composer-setup.php') === 'ハッシュ値') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" \
-#     && php composer-setup.php \
-#     && php -r "unlink('composer-setup.php');" \
-#     && mv composer.phar /usr/local/bin/composer
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
-
-#Laravelプロジェクトの作成
-# RUN composer create-project laravel/laravel  --prefer-dist laravel_sample
-
-# -- memo -- #
-# RUN命令はDockerfileからイメージを作成するときに実行される
-# CMD命令はイメージからコンテナが作成される時に実行される

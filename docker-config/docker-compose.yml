@@ -3,14 +3,12 @@ version: '3'
 services:
   app:
     build: ./web
-    # Laravelのソースコードを格納する
     volumes:
-      - ./app:/var/www/html
-      - ./web/apache/default.conf:/etc/apache2/sites-enabled/default.conf
+      - ./app:/var/www
+      - ./web/apache/000-default.conf:/etc/apache2/sites-enabled/000-default.conf
     ports:
       - "8081:80"
-    # working_dirを設定することで、コンテナに入った時にこのディレクトリから入れる
-    working_dir: /var/www/html
+    working_dir: /var/www
     depends_on:
       - db
   db:

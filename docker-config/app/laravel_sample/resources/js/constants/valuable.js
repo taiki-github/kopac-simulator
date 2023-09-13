@@ -1,0 +1,25 @@
+const convertVariablesToAddressTable = {
+    "0A": 80,
+    "0B": 75,
+    "0C": 70,
+    "0D": 74,
+    "0E": 72,
+    "0F": 78,
+    "0H": 61,
+    "0I": 68,
+    "0J": 82,
+    "0K": 86,
+    "0M": 63,
+    "0N": 62,
+    "0P": 69,
+    "0Q": 85,
+    "0S": 76,
+    "0U": 84,
+    "0V": 76,
+    "0W": 81,
+    "0X": 79,
+    "0Y": 77,
+    "0Z": 73,
+  }
+
+export default convertVariablesToAddressTable;
